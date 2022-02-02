@@ -11,6 +11,12 @@ public class Driver : MonoBehaviour
     public float buffDuration = 5f;
 
     float baseSpeed;
+    System.DateTime buffSetTime;
+
+    void Start()
+    {
+        baseSpeed = moveSpeed;
+    }
 
     void Update()
     {
@@ -24,6 +30,8 @@ public class Driver : MonoBehaviour
     {
         Debug.Log("slow speed");
         moveSpeed = slowSpeed;
+        buffSetTime = System.DateTime.Now;
+        Invoke("ResetMoveSpeed", buffDuration);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -32,8 +40,18 @@ public class Driver : MonoBehaviour
         {
             Debug.Log("boost speed");
             moveSpeed = boostSpeed;
-
+            buffSetTime = System.DateTime.Now;
+            Invoke("ResetMoveSpeed", buffDuration);
         }
     }
 
+    void ResetMoveSpeed()
+    {
+        var timeSpan = (System.DateTime.Now - buffSetTime).TotalSeconds;
+        if (timeSpan >= buffDuration)
+        {
+            Debug.Log("reset speed");
+            moveSpeed = baseSpeed;
+        }
+    }
 }
